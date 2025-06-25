@@ -24,7 +24,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2024-02-25 20:30"
+VERSION="2025-06-14 15:01"
 THIS_FILE=$(basename $0)
 FILE_TO_COMPARE=$THIS_FILE
 TEMP_FILE=$THIS_FILE"_temp.txt"
@@ -60,6 +60,7 @@ MP_DIR="/mnt/file_server/files"
 # Repostory directory under the shared directory is "scripts/BASH/Repository".
 #                 Local PC Mount-point directory is "/mnt/file_server/files".
 #
+# Local PC mount-point with LAN File Server Local Repository full directory path.
 # LOCAL_REPO_DIR="$MP_DIR/[DIRECTORY_PATH_TO_LOCAL_REPOSITORY]"
 # LOCAL_REPO_DIR="$MP_DIR/Local_Repository"
 LOCAL_REPO_DIR="$MP_DIR/Local_Repository"
@@ -77,8 +78,14 @@ WEB_REPOSITORY_URL="raw.githubusercontent.com/rdchin/bash-automatic-menu-creator
 #=================================================================
 #
 #
-# Temporary file FILE_LIST contains a list of file names of dependent
-# scripts and libraries.
+# --------------------------------------------------------
+# Create a list of all dependent library files and scripts
+# and write to temporary file, FILE_LIST.
+#
+# Temporary file FILE_LIST contains a list of file names
+# of dependent scripts and libraries.
+# --------------------------------------------------------
+#
 FILE_LIST=$THIS_FILE"_file_temp.txt"
 #
 # Format: [File Name]^[Local/Web]^[Local repository directory]^[Web repository directory]
@@ -89,6 +96,7 @@ echo "menu_items.lib^Local^$LOCAL_REPO_DIR^$WEB_REPOSITORY_URL" >> $FILE_LIST
 echo "common_bash_function.lib^Local^$LOCAL_REPO_DIR^$WEB_REPOSITORY_URL" >> $FILE_LIST
 #
 # Create a name for a temporary file which will have a list of files which need to be downloaded.
+# For further documentation and usage, please see function, fdl_download_missing_scripts.
 FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 #
 # +----------------------------------------+
@@ -204,6 +212,17 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ##
 ## Includes changes to menu.lib, menu_01.lib, menu_02.lib, and
 ##                     menu_items.lib.
+##
+## 2025-06-14 *Updated to latest standards.
+##            *Section "Default Variable Values" added documentation.
+##            *fdl_download_missing_scripts added documentation.
+##
+## 2025-01-17 *Section "Template Menu", "Help" improved the description.
+##
+## 2024-10-06 *Section "Main Program" changed method of
+##             detecting CLI/GUI environment. Updated comments.
+##
+## 2024-07-04 *f_menu_main_all_menus update dependencies documentation.
 ##
 ## 2024-02-25 *Section "Default Variable Values" bug fixed corrected
 ##             Web Repository reference for $FILE_LIST.
@@ -439,16 +458,16 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ##            *f_menu_arrays, f_update_menu_txt/gui bug fixed to not unset
 ##             TEMP_FILE variable since it is used globally.
 ##
-## 2020-05-06 *f_msg_ui_file_box_size, f_msg_ui_file_ok bug fixed in display.
+## 2020-05-06 *f_msg_ui_file_box_size, f_msg_ui_file_ok bug fixed.
 ##
-## 2020-05-04 *f_update_menu_gui adjusted menu display parameters for Whiptail.
+## 2020-05-04 *f_update_menu_gui changed menu display settings for Whiptail.
 ##
 ## 2020-04-22 *f_message split into several functions for clarity and
 ##             simplicity f_msg_(txt/ui)_(file/string)_(ok/nok).
 ##            *f_yn_question split off f_yn_defaults.
 ##
 ## 2020-04-19 *Found bug in VERSION setting in f_about, f_code_history,
-##             f_help_message. Need to set $VERSION using correct $THIS_FILE.
+##             f_help_message. Set $VERSION using correct $THIS_FILE.
 ##
 ## 2020-04-18 *Updated scripts for bug fixes and enhancements.
 ##
@@ -577,7 +596,7 @@ f_display_common () {
 #          Simply state the Path/Filename of the library file, ARRAY_SOURCE_FILE
 #          which contains the menu data.
 #
-# Dependencies: f_menu_arrays, f_create_show_menu.
+# Dependencies: f_create_a_menu.
 #
 # PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
 #              THIS FUNCTION INTO THE MAIN SCRIPT WHICH WILL CALL IT.
@@ -963,7 +982,7 @@ fdl_source () {
 # |  Function fdl_download_missing_scripts |
 # +----------------------------------------+
 #
-#     Rev: 2024-02-21
+#     Rev: 2025-06-14
 #  Inputs: $1 - File containing a list of all file dependencies.
 #          $2 - File name of generated list of missing file dependencies.
 # Outputs: ANS.
@@ -991,22 +1010,24 @@ fdl_download_missing_scripts () {
       TEMP_FILE=$THIS_FILE"_temp.txt"
       #
       # Delete any existing temp file.
-      if [ -r  $2 ] ; then
-         rm  $2
+      if [ -r $2 ] ; then
+         rm $2
       fi
       #
       # ****************************************************
       # Create new list of files that need to be downloaded.
       # ****************************************************
       #
-      # While-loop will read the file names listed in FILE_LIST ($1 list of
-      # script and library files) and detect which are missing and need
-      # to be downloaded and then put those file names in FILE_DL_LIST ($2).
+      # 1. While-loop will read the file names listed in $FILE_LIST ($1)
+      #    (list of script and library files) and detect which are missing and need
+      #    to be downloaded and then put those file names in FILE_DL_LIST ($2).
       #
+      # 2. Create a list of files FILE_DL_LIST ($2), which need to be downloaded.
+      #    Format: [File Name]^[Local/Web]^[Local repository directory]^[web repository directory]
       #
-      # Download files from Local Repository or Web GitHub Repository
-      # or extract files from the compressed file "cli-app-menu-new-main.zip"
-      # which may be downloaded from the repository on the Github.com website.
+      # 3. Download files from Local Repository or Web GitHub Repository
+      #    or extract files from the compressed file (such as "cli-app-menu-new-main.zip")
+      #    which may be downloaded from the repository on the Github.com website.
       #
       while read LINE
             do
@@ -1188,9 +1209,9 @@ sleep 1
 # Blank the screen.
 clear
 #
-#-------------------------------------------------------
-# Detect and download any missing scripts and libraries.
-#-------------------------------------------------------
+# +--------------------------------------------------------+
+# | Detect and download any missing scripts and libraries. |
+# +--------------------------------------------------------+
 #
 #----------------------------------------------------------------
 # Variables FILE_LIST and FILE_DL_LIST are defined in the section
@@ -1227,9 +1248,9 @@ if [ -r  $FILE_LIST ] ; then
    rm  $FILE_LIST
 fi
 #
-#***************************************************************
-# Process Any Optional Arguments and Set Variables THIS_DIR, GUI
-#***************************************************************
+# +----------------------------------------------------------------+
+# | Process Any Optional Arguments and Set Variables THIS_DIR, GUI |
+# +----------------------------------------------------------------+
 #
 # Set THIS_DIR, SCRIPT_PATH to directory path of script.
 f_script_path
@@ -1286,10 +1307,31 @@ if [ -r  $FILE_DL_LIST ] ; then
    rm  $FILE_DL_LIST
 fi
 #
-# Test for X-Windows environment. Cannot run in CLI for LibreOffice.
-# if [ x$DISPLAY = x ] ; then
-#    f_message text "OK" "\Z1\ZbCannot run LibreOffice without an X-Windows environment.\ni.e. LibreOffice must run in a terminal emulator in an X-Window.\Zn"
-# fi
+# +--------------------------------------------------------------+
+# | Determine what environment is in use, pure CLI or X-Windows? |
+# +--------------------------------------------------------------+
+#
+# Determine if user is in a pure CLI environment
+# or if using a CLI within an X-Window on a GUI Desktop.
+#
+# Set XWIN equal to the value of $DISPLAY.
+# XWIN=$(echo "$DISPLAY")
+#
+# $DISPLAY is null if in a pure CLI environment.
+# $DISPLAY is not null then in an X-Window environment.
+#
+# In an X-Window environment:
+# Format of $DISPLAY is: <hostname>:<Display number>.<Screen number>
+#
+# If on local PC (localhost) in X-Windows then <hostname> is null.
+# i.e. ":0" or ":0.0"
+#
+# If on a remote file server "Mainfileserver" in X-Windows then:
+# i.e. "Mainfileserver:0" or "Mainfileserver:0.1"
+#
+# +--------------------------------------------------------+
+# | Determine what programming shell environment is in use |
+# +--------------------------------------------------------+
 #
 # Test for BASH environment.
 f_test_environment $GUI
@@ -1298,15 +1340,20 @@ f_test_environment $GUI
 # trap 'f_abort' 0
 # set -e
 #
-#********************************
-# Show Brief Description message.
-#********************************
+# +---------------------------------+
+# | Show Brief Description message. |
+# +---------------------------------+
 #
 f_about $GUI "NOK" 1
 #
-#***************
-# Run Main Code.
-#***************
+# +---------------+
+# | Run Main Code |
+# +---------------+
+#
+# +--------------------+
+# | Display First Menu |
+# +--------------------+
+#
 #  Inputs for f_menu_main_all_menus
 #
 #  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
@@ -1325,7 +1372,7 @@ if [ -e $TEMP_FILE ] ; then
 fi
 #
 if [ -e  $FILE_LIST ] ; then
-   rm  $FILE_LIST
+   rm $FILE_LIST
 fi
 #
 if [ -e  $FILE_DL_LIST ] ; then

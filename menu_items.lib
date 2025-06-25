@@ -23,7 +23,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2024-02-25 20:30"
+VERSION="2025-06-14 15:01"
 #
 # Commented out THIS_FILE since it will conflict other scripts which
 # use this library.
@@ -111,7 +111,7 @@ VERSION="2024-02-25 20:30"
 #
 #@@Version Update#@@Check for updates to this script and download.#@@f_check_version^$GUI
 #
-#@@Help#@@Display help message.#@@f_help_message^$GUI
+#@@Help#@@Display Usage Options for this script.#@@f_help_message^$GUI
 #
 #! End Listing Template Menu (Required line, do not delete).
 #
